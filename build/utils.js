@@ -14,7 +14,10 @@ exports.cssLoader = function(options) {
   const postcssLoader = {
     loader: 'postcss-loader',
     options: {
-      sourceMap: options.sourceMap
+      sourceMap: options.sourceMap,
+      plugins: [
+        require("autoprefixer")
+      ]
     }
   }
 
@@ -32,14 +35,13 @@ exports.cssLoader = function(options) {
       })
     }
 
-    let exportLoader = ['vue-style-loader', ...loaders]
-    return options.extract ? exportLoader.unshift(MiniCssWebpackPlugin.loader) : exportLoader
+    if (options.extract) loaders.unshift(MiniCssWebpackPlugin.loader)
+    return loaders
   }
   // 缺啥自己加
   return {
     css: generateLoaders(),
-    less: generateLoaders('less'),
-    scss: generateLoaders('sass')
+    less: generateLoaders('less')
   }
 }
 
@@ -50,7 +52,7 @@ exports.styleLoaders = function (options) {
   for (const extension in loaders) {
     const loader = loaders[extension]
     output.push({
-      test: new RegExp('\\.' + extension + $),
+      test: new RegExp('\\.' + extension + '$'),
       use: loader
     })
   }
@@ -73,5 +75,22 @@ exports.createNotifierCallback = () => {
       subtitle: filename || '',
       icon: ''
     })
+  }
+}
+
+exports.netWorkIp = () => {
+  try {
+    let netWork = require("os").networkInterfaces()
+    for (let key in netWork) {
+      let lo = netWork[key]
+      for (let k of lo) {
+        if (k.family === 'IPv4' &&
+            k.address !== '127.0.0.1' &&
+            !k.internal)
+          return k.address
+      }
+    }
+  } catch(e) {
+    return null
   }
 }

@@ -9,20 +9,23 @@ const utils = require('./utils')
 const config = require('./config')
 
 const webpackConfig = merge(baseWebpackConfig, {
+  mode: "production",
+  devtool: false,
   module: {
     rules: utils.styleLoaders({
       sourceMap: false,
-      extract: config.build.extract,
-      userPostCSS: true
+      userPostCSS: true,
+      extract: config.build.extract
     })
   },
-
-  devtool: false,
   output: {
     filename: 'js/[name].[chunkhash].js',
     chunkFilename: 'js/[id].[chunkhash].js'
   },
   optimization: {
+    minimize: [
+      
+    ],
     splitChunks: {
       name: 'vendor',
       chunks(chunk) {
@@ -34,14 +37,13 @@ const webpackConfig = merge(baseWebpackConfig, {
           ) === 0
         )
       },
-      children: true,
       minChunks: 3,
     }
   },
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: '"production"'
+        NODE_ENV: JSON.stringify(config.build.NODE_ENV)
       }
     }),
     new OptimizeCSSPlugin({
@@ -51,7 +53,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
-      template: 'index.html',
+      template: 'public/index.html',
       inject: true,
       minify: {
         removeComments: true, // 去除注释
@@ -79,11 +81,11 @@ if (config.build.productionGzip) {
 
   webpackConfig.plugins.push(
     new CompressionWebpackPlugin({
-      asset: '[path].gz[query]',
+      filename: '[path].gz[query]',
       algorithm: 'gzip',
       test: new RegExp(`\.(${config.build.productionGzipExtensions.join('|')})$`),
       threshold: 10240,
-      mainRatio: 0.8
+      minRatio: 0.8
     })
   )
 }

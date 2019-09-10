@@ -27,7 +27,7 @@ module.exports = {
     rules: [
       {
         test: /\.vue$/,
-        use: 'vue-loader',
+        loader: 'vue-loader',
         options: {
           // 模块编译的过程中，是否将某些属性转为require调用
           transformToRequire: {
@@ -48,7 +48,7 @@ module.exports = {
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-        use: 'url-loader',
+        loader: 'url-loader',
         options: {
           limit: 10000,
           name: "static/img/[name].[hash:7].[ext]"
