@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="test">
     veuigeuawjyi
   </div>
 </template>
@@ -12,13 +12,13 @@ export default {
     }
   },
   mounted() {
-
+    console.log(process.env.NODE_ENV)
   }
 }
 </script>
 
-<style lang="less" scoped>
-div {
+<style lang="less">
+.test {
   display: flex;
   transform: skewX(10deg);
   background: lavenderblush;

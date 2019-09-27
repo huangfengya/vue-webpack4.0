@@ -2,7 +2,7 @@ const path = require("path")
 const webpack = require("webpack")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const merge = require("webpack-merge")
-const FirendlyErrorsPlugin = require("friendly-errors-webpack-plugin")
+const FriendlyErrorsPlugin = require("friendly-errors-webpack-plugin")
 const portfinder = require('portfinder')
 const baseWebpackConfig = require("./webpack.base.conf")
 const utils = require('./utils')
@@ -35,7 +35,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     new webpack.DefinePlugin({
       'process.env': {
         // 因为这个插件是直接替换，如果不用引号括起来，在被替换的位置会被当成 development 变量而非字符串，使用 JSON.stringify 转换也可以
-        NODE_ENV: JSON.stringify(config.dev.NODE_ENV)
+        NODE_ENV: '"development"'
       }
     }),
     new webpack.HotModuleReplacementPlugin(), // 热更新插件
@@ -58,7 +58,7 @@ module.exports = new Promise((resolve, reject) => {
       process.env.PORT = port
       devWebpackConfig.devServer.port = port
       devWebpackConfig.plugins.push(
-        new FirendlyErrorsPlugin({
+        new FriendlyErrorsPlugin({
           compilationSuccessInfo: {
             messages: [`http://${devWebpackConfig.devServer.host}:${port}`]
           },

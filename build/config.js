@@ -7,7 +7,7 @@ module.exports = {
     // 本地服务器配置
     host: "localhost",
     port: "8848",
-    autoOpen: true,
+    autoOpen: false,
     proxy: {
     }
   },

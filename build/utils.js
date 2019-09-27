@@ -4,6 +4,10 @@ const MiniCssWebpackPlugin = require("mini-css-extract-plugin")
 exports.cssLoader = function(options) {
   options = options || {}
 
+  const vueStyleLoader = {
+    loader: 'vue-style-loader'
+  }
+
   const cssLoader = {
     loader: 'css-loader',
     options: {
@@ -14,16 +18,13 @@ exports.cssLoader = function(options) {
   const postcssLoader = {
     loader: 'postcss-loader',
     options: {
-      sourceMap: options.sourceMap,
-      plugins: [
-        require("autoprefixer")
-      ]
+      sourceMap: options.sourceMap
     }
   }
 
   // 工厂函数，用于多种 css loader 生成，好机智
   function generateLoaders(loader, loaderOptions) {
-    const loaders = options.usePostCSS ? [cssLoader, postcssLoader] : [cssLoader]
+    const loaders = options.usePostCSS ? [vueStyleLoader, cssLoader, postcssLoader] : [vueStyleLoader, cssLoader]
 
     if (loader) {
       loaders.push({

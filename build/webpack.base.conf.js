@@ -1,7 +1,6 @@
 const path = require("path")
 // vue-loader v15 版本更新
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
-const utils = require("./utils")
 
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
@@ -40,7 +39,7 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        use: 'babel-loader',
+        loader: 'babel-loader',
         include: [
           resolve('src'),
           resolve('test')
