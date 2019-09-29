@@ -36,7 +36,11 @@ exports.cssLoader = function(options) {
       })
     }
 
-    if (options.extract) loaders.unshift(MiniCssWebpackPlugin.loader)
+    if (options.extract) {
+      // MiniCssWebpackPlugin 和 style-loader 不兼容，需要提取出来
+      loaders.shift()
+      loaders.unshift(MiniCssWebpackPlugin.loader)
+    }
     return loaders
   }
   // 缺啥自己加

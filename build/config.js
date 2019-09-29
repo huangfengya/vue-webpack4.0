@@ -21,7 +21,7 @@ module.exports = {
     extract: true,
 
     // 是否开启 gzip 压缩
-    productionGzip: true,
+    productionGzip: false,
     productionGzipExtensions: ['js', 'css']
   }
 }

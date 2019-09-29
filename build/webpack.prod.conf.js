@@ -3,7 +3,7 @@ const webpack = require("webpack")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const merge = require("webpack-merge")
 const MiniCssWebpackPlugin = require("mini-css-extract-plugin")
-const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+const OptimizeCssPlugin = require('optimize-css-assets-webpack-plugin')
 const baseWebpackConfig = require("./webpack.base.conf")
 const utils = require('./utils')
 const config = require('./config')
@@ -23,32 +23,38 @@ const webpackConfig = merge(baseWebpackConfig, {
     chunkFilename: 'js/[id].[chunkhash].js'
   },
   optimization: {
-    minimize: [
-      
+    minimizer: [
+      new OptimizeCssPlugin({
+        cssProcessorOptions: {
+          safe: true,
+          discardComments: {
+            removeAll: true,
+          }
+        },
+      })
     ],
     splitChunks: {
-      name: 'vendor',
-      chunks(chunk) {
-        return (
-          chunk.resource &&
-          /\.js$/.test(module.resource) &&
-          chunk.resource.indexOf(
-            path.join(__dirname, "../node_modules")
-          ) === 0
-        )
-      },
-      minChunks: 3,
+      chunks: 'all', //默认只作用于异步模块，为`all`时对所有模块生效,`initial`对同步模块有效
+      minSize: 30, // 小于该值的代码不会被压缩
+      automaticNameDelimiter: '~',
+      cacheGroups: {
+        vendors: {  // 主要用于对第三方模块的引用
+          test: /node_modules/,
+          minChunks: 1,
+          priority: -10
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true, // 允许代码复用
+        }
+      }
     }
   },
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify(config.build.NODE_ENV)
-      }
-    }),
-    new OptimizeCSSPlugin({
-      cssProcessorOptions: {
-        safe: true
       }
     }),
     new HtmlWebpackPlugin({
@@ -60,7 +66,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         collapseWhitespace: true, // 合并多余空格
         removeAttributeQuotes: true, // 如果HTML允许，去除属性的引号
       },
-      chunksSortMode: 'dependency'  // 顺序引入 js
+      chunksSortMode: 'dependency',  // 顺序引入 js
     })
   ]
 })
@@ -69,7 +75,7 @@ const webpackConfig = merge(baseWebpackConfig, {
 if (config.build.extract) {
   webpackConfig.plugins.push(
     new MiniCssWebpackPlugin({
-      filename: "css/style.css",
+      filename: "css/style.[hash:8].css",
       chunkFilename: "[id].css"
     })
   )

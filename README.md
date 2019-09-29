@@ -130,9 +130,55 @@ module.exports = {
 
 6. mini-css-extract-plugin
 
-css 提取成单独文件
+css 提取成单独文件，而且由于目前这个插件还不支持 HRM(热替换)，所以只能在线上环境使用
+
+注意：mini-css-extract-plugin 和各类style-loader 冲突，同时存在的话，会报 document is not defined 错误
+
+```javascript
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+          }
+        ]
+      }
+    ]
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: 'style.css',  // 路径为 output.publicpath + output.path + filename
+      chunkFilename: '[id].css'
+    })
+  ]
+}
+```
 
 7. optimize-css-assets-webpack-plugin
+
+css 压缩软件
+
+```javascript
+module.exports = {
+  optimization: {
+    minimizer: [
+      new OptimuzeCssPlugin({
+        assetNameRegExp: /\.css$/g, // 要压缩的文件，默认为 /\.css$/g
+        cssProcessor: require('cssnano'), // 处理方法，默认为 cssnano，不用自己重新引入 cssnano
+        cssProcessorOptions: {
+          safe: true,
+          discardComments: {
+            removeAll: true,  // 移除注释
+          }
+        },
+      })
+    ]
+  }
+}
+```
 
 css 压缩
 
@@ -147,7 +193,24 @@ module.exports = {
   ...
   optimization: {
     splitChunks: {
-      ...
+      chunks: 'all', //默认只作用于异步模块，为`all`时对所有模块生效,`initial`对同步模块有效
+      name: 'vendor', // 命名
+      minSize: 3000, // 小于该值的代码不会被压缩
+      minChunks: 1, // 至少被引用的次数，小于此值不会被提取
+      maxInitialRequests: 3,  // 入口文件的最大分包数，和 http 最大请求数有关，不建议修改
+      maxAsyncRequests: 5,  // 按需加载时最大的并行数，不建议修改
+      cacheGroups: {
+        vendors: {  // 主要用于对第三方模块的引用
+          test: /\/node_modules\//,
+          minChunks: 1,
+          priority: -10,  // 更高的优先级
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true, // 允许代码复用
+        }
+      }
     }
   }
 }
