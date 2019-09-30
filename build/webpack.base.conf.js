@@ -1,4 +1,5 @@
 const path = require("path")
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 // vue-loader v15 版本更新
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
@@ -73,6 +74,7 @@ module.exports = {
   },
   plugins: [
     // vue-loader v15 版本更新，必须要加
-    new VueLoaderPlugin()
+    new VueLoaderPlugin(),
+    new CleanWebpackPlugin(),
   ]
 }

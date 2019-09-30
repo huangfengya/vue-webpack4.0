@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin")
 const merge = require("webpack-merge")
 const MiniCssWebpackPlugin = require("mini-css-extract-plugin")
 const OptimizeCssPlugin = require('optimize-css-assets-webpack-plugin')
+const uglifyjsWebpackPlguin = require('uglifyjs-webpack-plugin')
 const baseWebpackConfig = require("./webpack.base.conf")
 const utils = require('./utils')
 const config = require('./config')
@@ -31,6 +32,12 @@ const webpackConfig = merge(baseWebpackConfig, {
             removeAll: true,
           }
         },
+      }),
+      new uglifyjsWebpackPlguin({
+        test: /\.js(\?.*)?$/,
+        exclude: /node_modules/,
+        cache: false,
+        parallel: true,
       })
     ],
     splitChunks: {
@@ -39,6 +46,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       automaticNameDelimiter: '~',
       cacheGroups: {
         vendors: {  // 主要用于对第三方模块的引用
+          name: 'vendors',
           test: /node_modules/,
           minChunks: 1,
           priority: -10

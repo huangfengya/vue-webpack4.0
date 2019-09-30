@@ -92,43 +92,7 @@ module.exports = {
 }
 ```
 
-3. webpack-merge
-
-用于对 webpack 配置文件的配置合并
-
-4. friendly-errors-webpack-plugin  node-notifier
-
-friendly-errors-webpack-plugin 用于对打包信息的提取，而不是所有打包信息都输出
-node-notifier 桌面提醒
-
-```javascript
-module.exports = {
-  devServer: {
-    quiet: true,  // 开启安静打包
-  },
-  plugins: [
-    new FriendlyErrorsPlugin({
-      compilationSuccessInfo: {
-        message: ['http://localhost:8848'],  // 打包成功显示的信息
-      },
-      onErrors: (severity, errors) => { // 错误会直接打印
-        require('node-notifier')({  // 桌面报错提示
-          title: "Webpack error", // 报错标题
-          message: severity + ': ' + error.name,  // 报错信息
-          subtitle: error.file || '', // 错误位置
-          // icon: ICON // 图标
-        })
-      }
-    })
-  ]
-}
-```
-
-5. portfinder
-
-获取端口……感觉没大大用途
-
-6. mini-css-extract-plugin
+3. mini-css-extract-plugin
 
 css 提取成单独文件，而且由于目前这个插件还不支持 HRM(热替换)，所以只能在线上环境使用
 
@@ -157,34 +121,7 @@ module.exports = {
 }
 ```
 
-7. optimize-css-assets-webpack-plugin
-
-css 压缩软件
-
-```javascript
-module.exports = {
-  optimization: {
-    minimizer: [
-      new OptimuzeCssPlugin({
-        assetNameRegExp: /\.css$/g, // 要压缩的文件，默认为 /\.css$/g
-        cssProcessor: require('cssnano'), // 处理方法，默认为 cssnano，不用自己重新引入 cssnano
-        cssProcessorOptions: {
-          safe: true,
-          discardComments: {
-            removeAll: true,  // 移除注释
-          }
-        },
-      })
-    ]
-  }
-}
-```
-
-css 压缩
-
-### 其他
-
-1. splitChunks 提取公共代码
+4. splitChunks 提取公共代码
 
 webpack4 自带js公共代码提取
 
@@ -216,8 +153,93 @@ module.exports = {
 }
 ```
 
-2. js 代码压缩
+5. uglifyjs-webpack-plguin js 压缩
 
-webpack4 在 "production" 环境下会自动压缩
+webpack4 之前是在 webpack.optimize.CommonsChunkPlugin 中压缩 js，webpack4 版本之后在 optimization.minimizer 中配置。注意：当配置 sourceMap: 'cheap-souce-map' 选项时不适用于此插件
 
-3. compression-webpack-plugin css 压缩
+```javascript
+module.exports = {
+  optimization: [
+    minimizer: {
+      new UglifyjsWebpackPlugin({
+        test: /\.js(\?.*)?$/, // 匹配要压缩的文件
+        include: /\/includes/,  // 包含哪些文件
+        exclude: /\/excludes/,  // 不包含哪些文件
+        cache: false, // 缓存
+        parallel: true, // 使用多线程并行运行来提高构建速度
+      })
+    }
+  ]
+}
+```
+
+6. optimize-css-assets-webpack-plugin css 压缩
+
+css 压缩软件
+
+```javascript
+module.exports = {
+  optimization: {
+    minimizer: [
+      new OptimuzeCssPlugin({
+        assetNameRegExp: /\.css$/g, // 要压缩的文件，默认为 /\.css$/g
+        cssProcessor: require('cssnano'), // 处理方法，默认为 cssnano，不用自己重新引入 cssnano
+        cssProcessorOptions: {
+          safe: true,
+          discardComments: {
+            removeAll: true,  // 移除注释
+          }
+        },
+      })
+    ]
+  }
+}
+```
+
+7. clean-webpack-plugin 清理文件夹
+
+```javascript
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+
+module.exports = {
+  plugins: [
+    new CleanWebpackPlugin()
+  ]
+}
+```
+
+8. friendly-errors-webpack-plugin  node-notifier
+
+friendly-errors-webpack-plugin 用于对打包信息的提取，而不是所有打包信息都输出
+node-notifier 桌面提醒
+
+```javascript
+module.exports = {
+  devServer: {
+    quiet: true,  // 开启安静打包
+  },
+  plugins: [
+    new FriendlyErrorsPlugin({
+      compilationSuccessInfo: {
+        message: ['http://localhost:8848'],  // 打包成功显示的信息
+      },
+      onErrors: (severity, errors) => { // 错误会直接打印
+        require('node-notifier')({  // 桌面报错提示
+          title: "Webpack error", // 报错标题
+          message: severity + ': ' + error.name,  // 报错信息
+          subtitle: error.file || '', // 错误位置
+          // icon: ICON // 图标
+        })
+      }
+    })
+  ]
+}
+```
+
+9. webpack-merge
+
+用于对 webpack 配置文件的配置合并
+
+10. portfinder
+
+获取端口……感觉没大大用途
