@@ -1,5 +1,6 @@
 const path = require("path")
 const MiniCssWebpackPlugin = require("mini-css-extract-plugin")
+const config = require('./config')
 
 exports.cssLoader = function(options) {
   options = options || {}
@@ -43,11 +44,16 @@ exports.cssLoader = function(options) {
     }
     return loaders
   }
-  // 缺啥自己加
-  return {
+  
+  const cssPreProcess = {
     css: generateLoaders(),
-    less: generateLoaders('less')
   }
+
+  for (let val of config.common.cssPreProcess) {
+    cssPreProcess[val] = generateLoaders(val === 'scss' ? 'sass' : val)
+  }
+
+  return cssPreProcess
 }
 
 // 独立的 css 文件解析

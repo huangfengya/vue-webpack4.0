@@ -12,7 +12,7 @@ export default {
     }
   },
   mounted() {
-    console.log(process.env.NODE_ENV)
+    const a = 1
   }
 }
 </script>

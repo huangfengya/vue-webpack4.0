@@ -2,6 +2,7 @@ const path = require("path")
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 // vue-loader v15 版本更新
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const config = require('./config')
 
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
@@ -9,9 +10,7 @@ function resolve(dir) {
 
 module.exports = {
   context: path.resolve(__dirname, "../"),
-  entry: {
-    app: './src/main.js',
-  },
+  entry: config.common.entry,
   output: {
     path: path.resolve(__dirname, '../dist'),
     filename: '[name].[hash:8].js'

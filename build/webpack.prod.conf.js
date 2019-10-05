@@ -14,14 +14,14 @@ const webpackConfig = merge(baseWebpackConfig, {
   devtool: false,
   module: {
     rules: utils.styleLoaders({
-      sourceMap: false,
-      userPostCSS: true,
-      extract: config.build.extract
+      sourceMap: config.build.sourceMap,
+      usePostCSS: config.build.postCss,
+      extract: config.build.extract,
     })
   },
   output: {
-    filename: 'js/[name].[chunkhash].js',
-    chunkFilename: 'js/[id].[chunkhash].js'
+    filename: 'static/js/[name].[chunkhash:8].js',
+    chunkFilename: 'static/js/[name].[chunkhash:8].js'
   },
   optimization: {
     minimizer: [
@@ -51,7 +51,8 @@ const webpackConfig = merge(baseWebpackConfig, {
           minChunks: 1,
           priority: -10
         },
-        default: {
+        common: {
+          name: 'common',
           minChunks: 2,
           priority: -20,
           reuseExistingChunk: true, // 允许代码复用
@@ -61,13 +62,14 @@ const webpackConfig = merge(baseWebpackConfig, {
   },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify(config.build.NODE_ENV)
-      }
+      'process.env': config.build.env,
     }),
+  ]
+})
+
+for (let val of config.build.mutileHtml) {
+  webpackConfig.plugins.push(
     new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: 'public/index.html',
       inject: true,
       minify: {
         removeComments: true, // 去除注释
@@ -75,16 +77,17 @@ const webpackConfig = merge(baseWebpackConfig, {
         removeAttributeQuotes: true, // 如果HTML允许，去除属性的引号
       },
       chunksSortMode: 'dependency',  // 顺序引入 js
+      ...val,
     })
-  ]
-})
+  )
+}
 
 // 是否提取 css
 if (config.build.extract) {
   webpackConfig.plugins.push(
     new MiniCssWebpackPlugin({
-      filename: "css/style.[hash:8].css",
-      chunkFilename: "[id].css"
+      filename: "static/css/style.css",
+      chunkFilename: "static/css/[name].css"
     })
   )
 }

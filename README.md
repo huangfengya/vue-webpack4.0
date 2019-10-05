@@ -54,7 +54,7 @@ options:
 
 ##### url-loader
 
-可以将较小的资源编码成 dataURL 并打包进代码，用于减少 http 请求，通过参数 limit 进行对不同大小的资源进行处理，而且 url-loader 内部封装了 file-loader
+可以将较小的资源编码成 dataURL 并打包进代码，用于减少 http 请求，通过参数 limit 进行对不同大小的资源进行处理，而且 url-loader 内部封装了 file-loader，但是 file-loader 包还是要下载的……
 
 > 打包后的资源路径：output.publicPath + url-loader.publicPath + output.path + url-loader.outputPath + url-loader.name
 
